@@ -1,5 +1,4 @@
 from pydub import AudioSegment
-import numpy as np
 import librosa
 import json
 
@@ -20,24 +19,11 @@ def merge_mp3_files(file_list, output_file):
         combined += sound
     combined.export(output_file, format="mp3")
 
-def pitch_shift(sound, n_steps):
-    y = np.frombuffer(sound._data, dtype=np.int16).astype(np.float32)/2**15
-    y = librosa.effects.pitch_shift(y, sound.frame_rate, n_steps=n_steps)
-    a  = AudioSegment(np.array(y * (1<<15), dtype=np.int16).tobytes(), frame_rate = sound.frame_rate, sample_width=2, channels = 1)
-    return a
-
-def change_pitch(input_path, output_path, pitch):
-    # Load input file
-    sound = AudioSegment.from_file(input_path, format="mp3")
-
-    # Change pitch
-    new_sound = sound._spawn(sound.raw_data, overrides={
-        "frame_rate": int(sound.frame_rate * pitch)
-    })
-
-    # Save output file
-    new_sound.export(output_path, format="mp3")
-    print(output_path)
+# change_pitch
+def change_pitch(input_file, output_file, pitch):
+    y, sr = librosa.load(input_file)
+    y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=pitch)
+    librosa.output.write_wav(output_file, y_shifted, sr)
 
 def pitchConverter(text):
     with open("tsmmidi", "r") as f:

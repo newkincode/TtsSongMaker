@@ -6,8 +6,8 @@ name = "pypi"
 [packages]
 pydub = "*"
 gtts = "*"
-numpy = "*"
 librosa = "*"
+charset-normalizer = "*"
 
 [dev-packages]
 
